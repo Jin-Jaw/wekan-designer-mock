@@ -1,0 +1,113 @@
+html,
+body {
+  min-height: 100%;
+}
+
+body.mock-standalone {
+  overflow: auto;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.minicard-wrapper {
+  cursor: pointer;
+}
+
+.minicard-wrapper.is-dragging .minicard {
+  opacity: 0.45;
+  transform: rotate(2deg);
+}
+
+.js-list.is-drop-target {
+  box-shadow: inset 0 0 0 2px rgba(46, 144, 208, 0.45);
+}
+
+.swimlane-add-list {
+  flex: 0 0 272px;
+  min-width: 272px;
+  max-width: 272px;
+  padding: 0 12px 12px;
+}
+
+.swimlane-add-list .open-list-composer,
+.swimlane-add-list .mock-list-composer {
+  display: block;
+  margin-top: 12px;
+  border-radius: 8px;
+}
+
+.swimlane-add-list .open-list-composer {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  padding: 12px 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.swimlane-add-list .open-list-composer:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.swimlane-add-list .open-list-composer i {
+  margin-right: 8px;
+}
+
+.mock-list-composer {
+  background: #dedede;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.mock-add-card-form {
+  margin: 0 0 10px;
+}
+
+.mock-list-composer .edit-controls,
+.mock-add-card-form .add-controls,
+.mock-inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mock-inline-form,
+.mock-card-form {
+  display: grid;
+  gap: 10px;
+}
+
+.mock-inline-form textarea,
+.mock-card-form textarea,
+.card-details .full-line {
+  width: 100%;
+}
+
+.mock-attachments {
+  display: grid;
+  gap: 8px;
+}
+
+.mock-attachment-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.mock-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 3000;
+  max-width: min(420px, calc(100vw - 40px));
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.94);
+  color: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+}
