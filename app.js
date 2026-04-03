@@ -808,8 +808,8 @@
   function renderMemberLink(memberId) {
     const member = getMember(memberId);
     return `
-      <a class="member js-member" href="#" title=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" aria-label=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" data-action="show-toast" data-toast="Los perfiles no estan conectados en este mock." style="background-color: ${escapeHtml(member.tone)}; color: ${escapeHtml(member.text)};">
-        <span class="member-initials-text">${escapeHtml(member.initials)}</span>
+      <a class="member js-member" href="#" title=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" aria-label=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" data-action="show-toast" data-toast="Los perfiles no estan conectados en este mock.">
+        ${renderAvatar(member)}
       </a>
     `;
   }
@@ -1189,14 +1189,11 @@
       body.style.display = list.collapsed ? 'none' : '';
     }
     if (footerWrapper) {
-      footerWrapper.style.display = list.collapsed ? 'none' : 'block';
+      footerWrapper.style.display =
+        list.collapsed || state.ui.composerListId === list.id ? 'none' : 'block';
       footerWrapper.innerHTML = '';
-      if (!list.collapsed) {
-        if (state.ui.composerListId === list.id) {
-          footerWrapper.appendChild(createAddCardComposer(list.id));
-        } else {
-          footerWrapper.appendChild(createAddCardTrigger(list.id));
-        }
+      if (!list.collapsed && state.ui.composerListId !== list.id) {
+        footerWrapper.appendChild(createAddCardTrigger(list.id));
       }
     }
 
@@ -1217,6 +1214,10 @@
       for (const card of list.cards) {
         minicards.appendChild(createCardElement(card, list.id));
       }
+
+      if (!list.collapsed && state.ui.composerListId === list.id) {
+        minicards.appendChild(createAddCardComposer(list.id));
+      }
     }
 
     return listEl;
@@ -1225,6 +1226,21 @@
   function createCardElement(card, listId) {
     const priorityMeta = PRIORITY_META[card.priority] || PRIORITY_META.medium;
     const labelsExpanded = isMinicardLabelsExpanded(card.id);
+    const labelsMarkup = card.labels.length
+      ? `
+          <div class="minicard-labels ${labelsExpanded ? 'is-expanded' : ''}">
+            ${card.labels
+              .map(
+                (label) => `
+                  <span class="js-card-label card-label minicard-label-pill card-label-${escapeHtml(label.color)}" aria-expanded="${labelsExpanded ? 'true' : 'false'}" title="${escapeHtml(label.name)}" data-action="toggle-minicard-labels" data-card-id="${escapeHtml(card.id)}">
+                    ${viewer(label.name)}
+                  </span>
+                `,
+              )
+              .join('')}
+          </div>
+        `
+      : '';
     return createElement(`
       <div class="minicard-wrapper js-minicard ui-droppable" data-card-id="${escapeHtml(card.id)}" data-list-id="${escapeHtml(listId)}" draggable="true">
         <div class="minicard nodragscroll ${card.cover ? 'has-cover' : 'no-cover'}">
@@ -1242,17 +1258,7 @@
             <i class="fa fa-bars"></i>
           </a>
           <div class="dates"></div>
-          <div class="minicard-labels ${labelsExpanded ? 'is-expanded' : ''}">
-            ${card.labels
-              .map(
-                (label) => `
-                  <span class="js-card-label card-label minicard-label-pill card-label-${escapeHtml(label.color)}" aria-expanded="${labelsExpanded ? 'true' : 'false'}" title="${escapeHtml(label.name)}" data-action="toggle-minicard-labels" data-card-id="${escapeHtml(card.id)}">
-                    ${viewer(label.name)}
-                  </span>
-                `,
-              )
-              .join('')}
-          </div>
+          ${labelsMarkup}
           <div class="minicard-title">
             ${viewer(card.title)}
           </div>
@@ -1342,10 +1348,16 @@
   }
 
   function renderCardDetailsHtml(card, list) {
+    const detailsCoverMarkup = card.cover
+      ? `
+          <div class="card-details-cover" style="background-image: url(&quot;${escapeHtml(card.cover)}&quot;);"></div>
+        `
+      : '';
     return `
       <section class="card-details js-card-details nodragscroll ${state.ui.cardMaximized ? 'card-details-maximized' : ''} ${state.ui.cardCollapsed ? 'card-details-collapsed' : ''}">
         <div class="card-details-canvas">
-          <div class="card-details-header">
+          <div class="card-details-header ${card.cover ? 'has-cover' : 'no-cover'}" style="background: transparent !important; background-color: transparent !important; background-image: none !important; box-shadow: none !important; border: none !important;">
+            ${detailsCoverMarkup}
             <span class="card-collapse-toggle js-card-collapse-toggle" data-action="toggle-card-collapse" title="Contraer tarjeta">
               <i class="fa ${state.ui.cardCollapsed ? 'fa-caret-right' : 'fa-caret-down'}"></i>
             </span>
@@ -1365,8 +1377,8 @@
               <i class="fa fa-arrows"></i>
             </span>
             <span class="copied-tooltip">Copiado</span>
-            <h2 class="card-details-title js-card-title">
-              ${viewer(card.title)}
+            <h2 class="card-details-title js-card-title" contenteditable="true" spellcheck="false" data-card-id="${escapeHtml(card.id)}" data-role="card-title-editor">
+              ${escapeHtml(card.title)}
             </h2>
             <div class="card-details-path">&nbsp; &gt; &nbsp; ${escapeHtml(list.title)}</div>
           </div>
@@ -1433,7 +1445,6 @@
                 Detalles
               </h3>
               <form class="mock-card-form" data-form="update-card" data-card-id="${escapeHtml(card.id)}">
-                <input class="full-line" type="text" name="title" value="${escapeHtml(card.title)}">
                 <textarea class="full-line" name="description" rows="6" placeholder="Anade una descripcion mas detallada...">${escapeHtml(card.description)}</textarea>
                 <div class="mock-inline-actions">
                   <button class="primary confirm" type="submit">Guardar</button>
@@ -1787,6 +1798,13 @@
       event.preventDefault();
     }
 
+    const detailsHost = event.target.closest('.mock-card-details-host');
+    if (detailsHost && !event.target.closest('.js-card-details')) {
+      state.ui.detailsCardId = null;
+      render();
+      return;
+    }
+
     const actionEl = event.target.closest('[data-action]');
     if (actionEl) {
       event.preventDefault();
@@ -2020,7 +2038,9 @@
       if (!context) {
         return;
       }
-      context.card.title = (form.elements.title.value || '').trim() || context.card.title;
+      const titleEditor = document.querySelector(`.card-details-title[data-card-id="${form.dataset.cardId}"]`);
+      const editedTitle = (titleEditor?.textContent || '').trim();
+      context.card.title = editedTitle || context.card.title;
       context.card.description = (form.elements.description.value || '').trim();
       context.card.activity.unshift({
         id: `activity-${Date.now()}`,
