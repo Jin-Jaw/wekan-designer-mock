@@ -793,6 +793,42 @@
     return template.content.firstElementChild;
   }
 
+  function measureCollapsedListTitleHeight(title) {
+    if (!title) return 72;
+
+    const probe = document.createElement('span');
+    probe.textContent = title;
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    probe.style.pointerEvents = 'none';
+    probe.style.whiteSpace = 'nowrap';
+    probe.style.fontFamily = "'Atlassian Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    probe.style.fontSize = '14px';
+    probe.style.fontWeight = '600';
+    probe.style.lineHeight = '20px';
+    document.body.appendChild(probe);
+    const measured = Math.ceil(probe.getBoundingClientRect().width);
+    probe.remove();
+    return Math.max(72, measured + 4);
+  }
+
+  function syncCollapsedListHeader(listEl) {
+    const titleEl = listEl.querySelector('.list-header-name.js-open-inlined-form.is-editable');
+    const titleWrapper = titleEl ? titleEl.parentElement : null;
+    if (!titleWrapper) return;
+
+    if (!listEl.classList.contains('list-collapsed')) {
+      titleWrapper.style.removeProperty('--collapsed-title-height');
+      return;
+    }
+
+    const titleText = (titleEl.textContent || '').trim();
+    titleWrapper.style.setProperty(
+      '--collapsed-title-height',
+      `${measureCollapsedListTitleHeight(titleText)}px`,
+    );
+  }
+
   function viewer(text) {
     return `<div class="viewer" dir="auto"><p>${escapeHtml(text)}</p></div>`;
   }
@@ -1222,6 +1258,8 @@
         minicards.appendChild(createAddCardComposer(list.id));
       }
     }
+
+    syncCollapsedListHeader(listEl);
 
     return listEl;
   }
