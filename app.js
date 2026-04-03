@@ -799,19 +799,17 @@
 
   function renderAvatar(member) {
     return `
-      <svg class="avatar avatar-initials" viewBox="0 0 12 15" style="background-color: ${escapeHtml(member.tone)}; color: ${escapeHtml(member.text)};">
-        <text x="50%" y="11" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="${escapeHtml(member.text)}">
-          ${escapeHtml(member.initials)}
-        </text>
-      </svg>
+      <span class="avatar avatar-initials" style="background-color: ${escapeHtml(member.tone)}; color: ${escapeHtml(member.text)};">
+        <span class="avatar-initials-text">${escapeHtml(member.initials)}</span>
+      </span>
     `;
   }
 
   function renderMemberLink(memberId) {
     const member = getMember(memberId);
     return `
-      <a class="member js-member" href="#" title=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" aria-label=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" data-action="show-toast" data-toast="Los perfiles no estan conectados en este mock.">
-        ${renderAvatar(member)}
+      <a class="member js-member" href="#" title=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" aria-label=" (${escapeHtml(member.username)}) ${escapeHtml(member.role)}" data-action="show-toast" data-toast="Los perfiles no estan conectados en este mock." style="background-color: ${escapeHtml(member.tone)}; color: ${escapeHtml(member.text)};">
+        <span class="member-initials-text">${escapeHtml(member.initials)}</span>
       </a>
     `;
   }
@@ -875,11 +873,42 @@
     renderQuickAccessState();
     renderHeaderState();
     renderBoardViewState();
+    renderDashboardSummary();
     renderSidebarState();
     renderLists();
     renderCardDetails();
     syncUrl();
     focusOpenForms();
+  }
+
+  function renderDashboardSummary() {
+    if (!dom.boardCanvas || state.ui.mobile) {
+      const existing = document.querySelector('.dashboard-summary');
+      if (existing) existing.remove();
+      return;
+    }
+
+    let summaryEl = document.querySelector('.dashboard-summary');
+    if (!summaryEl) {
+      summaryEl = document.createElement('div');
+      summaryEl.className = 'dashboard-summary';
+      dom.boardCanvas.prepend(summaryEl);
+    }
+
+    summaryEl.innerHTML = `
+      <div class="summary-card">
+        <div class="summary-card-label">OWNER</div>
+        <div class="summary-card-value">Design Team</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">SPRINT</div>
+        <div class="summary-card-value">Q2 - Wave 4</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">GOAL</div>
+        <div class="summary-card-value">Client Portal MVP</div>
+      </div>
+    `;
   }
 
   function renderBodyState() {
@@ -911,30 +940,31 @@
   }
 
   function renderHeaderState() {
-    const watch = getWatchMeta();
-    const view = getBoardViewMeta();
+    if (!dom.headerMainBar) {
+      dom.headerMainBar = document.getElementById('header-main-bar');
+    }
+
+    if (dom.headerMainBar && !dom.headerMainBar.querySelector('.hero-brand-area')) {
+      dom.headerMainBar.innerHTML = `
+        <div class="hero-brand-area">
+          <div class="brand-pill">Wekan</div>
+          <div class="mockup-badge">Mockup</div>
+        </div>
+        <div class="header-board-menu">
+          <span class="viewer"></span>
+        </div>
+        <div class="hero-actions-area">
+          <button class="action-pill">Share View</button>
+          <div class="avatar-cluster">
+            ${state.board.members.slice(0, 3).map(m => renderAvatar(m)).join('')}
+          </div>
+        </div>
+      `;
+      dom.boardTitleViewer = dom.headerMainBar.querySelector('.header-board-menu .viewer');
+    }
 
     setViewerText(dom.boardTitleViewer, state.board.title);
     document.title = `${state.board.title} - Wekan`;
-
-    if (dom.swimlaneHeader) {
-      dom.swimlaneHeader.textContent = state.board.swimlaneTitle || 'Release Candidate';
-    }
-
-    if (dom.watchBoardButton) {
-      dom.watchBoardButton.innerHTML = `<i class="fa ${watch.icon}"></i> <span>${watch.label}</span>`;
-      dom.watchBoardButton.title = watch.label;
-      dom.watchBoardButton.setAttribute('aria-label', watch.label);
-    }
-
-    if (dom.starBoardButton) {
-      dom.starBoardButton.classList.toggle('is-starred', state.board.starred);
-      dom.starBoardButton.innerHTML = `<i class="fa ${state.board.starred ? 'fa-star' : 'fa-star-o'}"></i>`;
-    }
-
-    if (dom.boardViewButton) {
-      dom.boardViewButton.innerHTML = `<i class="fa fa-caret-down"></i><i class="fa ${view.icon}"></i><span>${view.label} </span>`;
-    }
   }
 
   function renderSidebarState() {
@@ -1071,13 +1101,33 @@
     listEl.id = `js-list-${list.id}`;
     listEl.dataset.listId = list.id;
     listEl.classList.toggle('list-collapsed', !!list.collapsed);
+    listEl.classList.toggle('has-open-composer', state.ui.composerListId === list.id);
     const surfaceColor = list.surfaceColor || '#000000';
-    listEl.style.setProperty('background', surfaceColor, 'important');
-    listEl.style.setProperty('background-color', surfaceColor, 'important');
-    listEl.style.setProperty('background-image', 'none', 'important');
-    listEl.style.setProperty('border-left-color', surfaceColor, 'important');
+    // Removed inline styles to allow mock.css premium skin to take over
+    listEl.style.setProperty('--list-accent-color', surfaceColor);
+
+    // Surgical fix: remove dark inline properties surviving from template
+    listEl.style.removeProperty('background');
+    listEl.style.removeProperty('background-color');
+    listEl.style.removeProperty('background-image');
+    listEl.style.removeProperty('border-left-color');
 
     const collapseToggle = listEl.querySelector('.js-collapse');
+    const listMenu = listEl.querySelector('.js-open-list-menu');
+
+    setViewerText(listEl.querySelector('.list-header-name .viewer'), list.title);
+
+    const header = listEl.querySelector('.list-header');
+    const headerWrapper = header ? header.querySelector('.js-inlined-form-wrapper') : null;
+    const titleWrapper = listEl.querySelector('.list-header-name')?.parentElement;
+    if (headerWrapper) {
+      headerWrapper.classList.add('list-header-row');
+      headerWrapper.style.removeProperty('display');
+    }
+    if (titleWrapper) {
+      titleWrapper.classList.add('list-header-title-wrap');
+    }
+
     const collapseIcon = collapseToggle ? collapseToggle.querySelector('i.fa') : null;
     if (collapseToggle) {
       collapseToggle.href = '#';
@@ -1089,8 +1139,40 @@
     if (collapseIcon) {
       collapseIcon.className = `fa ${list.collapsed ? 'fa-caret-right' : 'fa-caret-down'}`;
     }
+    if (listMenu) {
+      listMenu.href = '#';
+      listMenu.dataset.action = 'show-toast';
+      listMenu.dataset.toast = 'Las acciones avanzadas de listas no estan conectadas.';
+    }
 
-    setViewerText(listEl.querySelector('.list-header-name .viewer'), list.title);
+    const listMenuWrapper = listMenu ? listMenu.closest('.list-header-menu') : null;
+    if (listMenuWrapper) {
+      listMenuWrapper.classList.add('list-header-controls');
+      if (collapseToggle && headerWrapper) {
+        if (list.collapsed) {
+          if (collapseToggle.parentElement !== headerWrapper) {
+            headerWrapper.insertBefore(collapseToggle, headerWrapper.firstChild);
+          }
+        } else if (collapseToggle.parentElement !== listMenuWrapper) {
+          listMenuWrapper.insertBefore(collapseToggle, listMenuWrapper.firstChild);
+        }
+      }
+      if (!list.collapsed && headerWrapper && listMenuWrapper.parentElement === headerWrapper) {
+        headerWrapper.appendChild(listMenuWrapper);
+      }
+    }
+
+    const listBody = listEl.querySelector('.list-body');
+    if (listBody && !listEl.querySelector('.list-header-plus')) {
+      const plus = document.createElement('a');
+      plus.className = 'list-header-plus';
+      plus.href = '#';
+      plus.innerHTML = '<i class="fa fa-plus"></i><span>Add a card</span>';
+      plus.dataset.action = 'open-add-card';
+      plus.dataset.listId = list.id;
+      listEl.appendChild(plus);
+    }
+
     const count = listEl.querySelector('.cardCount');
     if (count) {
       count.textContent = `${list.cards.length}/${list.cards.length}`;
@@ -1098,16 +1180,7 @@
 
     const addToTop = listEl.querySelector('.js-add-card');
     if (addToTop) {
-      addToTop.href = '#';
-      addToTop.dataset.action = 'open-add-card';
-      addToTop.dataset.listId = list.id;
-    }
-
-    const listMenu = listEl.querySelector('.js-open-list-menu');
-    if (listMenu) {
-      listMenu.href = '#';
-      listMenu.dataset.action = 'show-toast';
-      listMenu.dataset.toast = 'Las acciones avanzadas de listas no estan conectadas.';
+      addToTop.remove();
     }
 
     const body = listEl.querySelector('.list-body');
@@ -1116,7 +1189,7 @@
       body.style.display = list.collapsed ? 'none' : '';
     }
     if (footerWrapper) {
-      footerWrapper.style.display = list.collapsed ? 'none' : 'contents';
+      footerWrapper.style.display = list.collapsed ? 'none' : 'block';
       footerWrapper.innerHTML = '';
       if (!list.collapsed) {
         if (state.ui.composerListId === list.id) {
@@ -1154,23 +1227,21 @@
     const labelsExpanded = isMinicardLabelsExpanded(card.id);
     return createElement(`
       <div class="minicard-wrapper js-minicard ui-droppable" data-card-id="${escapeHtml(card.id)}" data-list-id="${escapeHtml(listId)}" draggable="true">
-        <div class="minicard nodragscroll">
+        <div class="minicard nodragscroll ${card.cover ? 'has-cover' : 'no-cover'}">
+          ${
+            card.cover
+              ? `
+          <img class="js-minicard-cover-image-probe minicard-cover-image-probe" data-cover-id="${escapeHtml(card.id)}" src="${escapeHtml(card.cover)}" alt="">
+          <div class="minicard-cover" style="background-image: url(&quot;${escapeHtml(card.cover)}&quot;);"></div>
+              `
+              : ''
+          }
+          <div class="minicard-body">
           <a class="minicard-details-menu-with-handle js-open-minicard-details-menu ${escapeHtml(priorityMeta.className)}" href="#" title="Acciones de la tarjeta" aria-label="Acciones de la tarjeta" data-action="show-toast" data-toast="Las acciones rapidas de la tarjeta no estan conectadas.">
             <i class="fa ${escapeHtml(priorityMeta.icon)}" title="${escapeHtml(priorityMeta.label)}" aria-label="${escapeHtml(priorityMeta.label)}"></i>
             <i class="fa fa-bars"></i>
           </a>
           <div class="dates"></div>
-          <div class="minicard-title">
-            ${viewer(card.title)}
-          </div>
-          ${
-            card.cover
-              ? `
-                <img class="js-minicard-cover-image-probe minicard-cover-image-probe" data-cover-id="${escapeHtml(card.id)}" src="${escapeHtml(card.cover)}" alt="">
-                <div class="minicard-cover" style="background-image: url(&quot;${escapeHtml(card.cover)}&quot;);"></div>
-              `
-              : ''
-          }
           <div class="minicard-labels ${labelsExpanded ? 'is-expanded' : ''}">
             ${card.labels
               .map(
@@ -1182,11 +1253,15 @@
               )
               .join('')}
           </div>
+          <div class="minicard-title">
+            ${viewer(card.title)}
+          </div>
           <div class="minicard-custom-fields"></div>
           <div class="minicard-assignees js-minicard-assignees">
             ${card.assignees.map(renderMemberLink).join('')}
           </div>
           <div class="badges"></div>
+          </div>
         </div>
       </div>
     `);

@@ -1,113 +1,827 @@
+:root {
+  --premium-bg-gradient: linear-gradient(180deg, #f0f7ff 0%, #e2eeff 100%);
+  --premium-glass-bg: #f1f2f4;
+  --premium-card-bg: #ffffff;
+  --premium-card-shadow: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+  --premium-card-shadow-hover: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+  --premium-border-radius-lg: 32px;
+  --premium-border-radius-md: 12px;
+  --premium-border-radius-sm: 8px;
+  --premium-text-main: #172b4d;
+  --premium-text-muted: #5e6c84;
+  --premium-accent: #3b82f6;
+  --premium-accent-soft: #eff6ff;
+  --premium-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 html,
 body {
-  min-height: 100%;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow: hidden !important;
 }
 
-body.mock-standalone {
-  overflow: auto;
+/* 1. Global Reset & Background Override */
+body.mock-standalone,
+body.mock-standalone .wekan,
+body.mock-standalone #content,
+body.mock-standalone .board-wrapper,
+body.mock-standalone .board-canvas {
+  background-image: none !important;
+  background-color: #f0f7ff !important;
+  background: var(--premium-bg-gradient) !important;
+  font-family: 'Inter', -apple-system, sans-serif !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow: hidden !important;
 }
 
-[hidden] {
+.board-wrapper .board-canvas {
+  background-image: none !important;
+  background-color: transparent !important;
+  padding-top: 10px !important;
+  padding-bottom: 60px !important;
+  height: calc(100vh - 148px) !important;
+  max-height: calc(100vh - 148px) !important;
+  overflow: hidden !important;
+}
+
+/* 2. Premium Hero Bar */
+#header {
+  background: #ffffff !important;
+  height: 80px !important;
+  margin: 24px 24px 16px 24px !important;
+  border-radius: var(--premium-border-radius-lg) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 32px !important;
+  border: none !important;
+  position: sticky !important;
+  top: 24px !important;
+  z-index: 1000 !important;
+}
+
+#header-main-bar {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr !important;
+  align-items: center !important;
+}
+
+/* Custom Header Elements Injected via app.js */
+.hero-brand-area {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.brand-pill {
+  background: #000 !important;
+  color: #fff !important;
+  padding: 6px 14px !important;
+  border-radius: 100px !important;
+  font-weight: 800 !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+}
+
+.mockup-badge {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  padding: 6px 12px !important;
+  border-radius: 100px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+}
+
+.header-board-menu {
+  grid-column: 2 !important;
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--premium-text-main) !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.hero-actions-area {
+  grid-column: 3 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+.action-pill {
+  background: var(--premium-accent-soft) !important;
+  color: var(--premium-accent) !important;
+  padding: 10px 20px !important;
+  border-radius: 100px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  border: none !important;
+}
+
+.avatar-cluster {
+  display: flex !important;
+  margin-left: 8px !important;
+}
+
+.avatar-cluster .avatar {
+  margin-left: -10px !important;
+  border: 3px solid #fff !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  line-height: 1 !important;
+}
+
+/* 3. Info Panels (Owner/Sprint/Goal) */
+.dashboard-summary {
+  display: flex !important;
+  gap: 16px !important;
+  margin: 0 24px 32px 24px !important;
+  padding: 0 !important;
+}
+
+.summary-card {
+  background: #ffffff !important;
+  padding: 24px 32px !important;
+  border-radius: var(--premium-border-radius-md) !important;
+  flex: 1 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+.summary-card-label {
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  color: var(--premium-text-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+}
+
+.summary-card-value {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: var(--premium-text-main) !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* 4. Column Styling */
+.swimlane.js-lists {
+  padding: 0 24px 40px 24px !important;
+  gap: 24px !important;
+}
+
+body.mock-standalone .swimlane.js-lists .list.js-list {
+  background: var(--premium-glass-bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: var(--premium-border-radius-md) !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 4px !important;
+  width: 272px !important;
+  min-width: 272px !important;
+  margin-right: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: flex-start !important;
+  height: calc(100vh - 232px) !important;
+  min-height: calc(100vh - 232px) !important;
+  max-height: calc(100vh - 232px) !important;
+  overflow: hidden !important;
+}
+
+.list-header {
+  margin-bottom: 0 !important;
+  padding: 6px 8px 6px 12px !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+body.mock-standalone.desktop-mode .list.js-list .list-header.js-list-header.nodragscroll.ui-sortable-handle,
+body.mock-standalone .list:not(.list-collapsed):not(.mobile-view) .list-header.js-list-header.nodragscroll.ui-sortable-handle,
+body.mock-standalone .desktop-mode .list-header.js-list-header.nodragscroll.ui-sortable-handle {
+  padding: 6px 8px 6px 12px !important;
+  padding-top: 6px !important;
+  padding-right: 8px !important;
+  padding-bottom: 6px !important;
+  padding-left: 12px !important;
+}
+
+body.mock-standalone .swimlane.js-lists .list.js-list .list-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  padding-bottom: 8px !important;
+  margin-top: 0 !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+body.mock-standalone .swimlane.js-lists .list.js-list .list-body > .js-inlined-form-wrapper[data-position="bottom"] {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+}
+
+body.mock-standalone .swimlane.js-lists .list.js-list .list-body > .js-inlined-form-wrapper[data-position="bottom"] .mock-add-card-form {
+  display: block !important;
+  width: 100% !important;
+}
+
+body.mock-standalone .swimlane.js-lists .list.js-list.has-open-composer > .list-header-plus {
   display: none !important;
 }
 
+.list-header-name {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--premium-text-main) !important;
+  line-height: 20px !important;
+  letter-spacing: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.list-header-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.list-header-title-wrap {
+  order: 1 !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+  clear: none !important;
+  margin-right: auto !important;
+}
+
+.list-header-name .viewer,
+.list-header-name .viewer p {
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+.list-header .cardCount,
+.list-header .list-header-plus-top {
+  display: none !important;
+}
+
+.list-header .list-header-menu,
+.list-header-controls {
+  order: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 4px !important;
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  margin-top: 0 !important;
+  position: static !important;
+  min-width: 50px !important;
+  white-space: nowrap !important;
+  float: none !important;
+  width: auto !important;
+  clear: none !important;
+}
+
+.list-header .list-header-menu .js-collapse,
+.list-header .list-header-menu .js-open-list-menu,
+.list-header-controls .js-collapse,
+.list-header-controls .js-open-list-menu {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  color: var(--premium-text-muted) !important;
+  text-decoration: none !important;
+  position: static !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  margin: 0 !important;
+  float: none !important;
+  transform: none !important;
+  flex: 0 0 32px !important;
+  padding: 0 !important;
+  min-width: 32px !important;
+  border: 1px solid rgba(173, 190, 214, 0.18) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-sizing: border-box !important;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease !important;
+}
+
+.list-header .list-header-menu .js-collapse i,
+.list-header .list-header-menu .js-open-list-menu i,
+.list-header-controls .js-collapse i,
+.list-header-controls .js-open-list-menu i {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+
+.list-header .list-header-menu .js-collapse:hover,
+.list-header .list-header-menu .js-open-list-menu:hover,
+.list-header-controls .js-collapse:hover,
+.list-header-controls .js-open-list-menu:hover {
+  border-color: rgba(118, 144, 176, 0.42) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 6px 14px rgba(148, 163, 184, 0.14) !important;
+}
+
+.list.list-collapsed .list-header > .js-inlined-form-wrapper > .js-collapse {
+  position: relative !important;
+  z-index: 20 !important;
+  align-self: center !important;
+}
+
+.list-header-plus {
+  width: 100% !important;
+  min-height: 32px !important;
+  margin-top: 4px !important;
+  background: transparent !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  color: var(--premium-text-muted) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  padding: 6px 8px !important;
+  flex: 0 0 auto !important;
+  position: sticky !important;
+  bottom: 0 !important;
+}
+
+/* 5. Card Styling */
 .minicard-wrapper {
-  cursor: pointer;
+  margin-bottom: 8px !important;
 }
 
-.minicard-wrapper.is-dragging .minicard {
-  opacity: 0.45;
-  transform: rotate(2deg);
+.minicard {
+  background: var(--premium-card-bg) !important;
+  border-radius: var(--premium-border-radius-sm) !important;
+  box-shadow: var(--premium-card-shadow) !important;
+  padding: 0 !important;
+  border: none !important;
+  transition: var(--premium-transition) !important;
+  overflow: hidden !important;
 }
 
-.js-list.is-drop-target {
-  box-shadow: inset 0 0 0 2px rgba(46, 144, 208, 0.45);
+.minicard:hover {
+  transform: none !important;
+  box-shadow: var(--premium-card-shadow-hover) !important;
 }
 
-.swimlane-add-list {
-  flex: 0 0 272px;
-  min-width: 272px;
-  max-width: 272px;
-  padding: 0 12px 12px;
+.minicard-body {
+  position: relative !important;
+  padding: 8px !important;
 }
 
-.swimlane-add-list .open-list-composer,
-.swimlane-add-list .mock-list-composer {
-  display: block;
-  margin-top: 12px;
-  border-radius: 8px;
+.minicard.has-cover .minicard-body {
+  padding-top: 8px !important;
 }
 
-.swimlane-add-list .open-list-composer {
-  background: rgba(255, 255, 255, 0.24);
-  color: #fff;
-  padding: 12px 14px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+.minicard.no-cover .minicard-body {
+  padding-top: 8px !important;
 }
 
-.swimlane-add-list .open-list-composer:hover {
-  background: rgba(255, 255, 255, 0.32);
+.minicard-title {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 20px !important;
+  color: var(--premium-text-main) !important;
+  margin: 0 !important;
 }
 
-.swimlane-add-list .open-list-composer i {
-  margin-right: 8px;
+.minicard-cover {
+    display: block !important;
+    width: 100% !important;
+    height: 160px !important;
+    border-radius: 8px 8px 0 0 !important;
+    margin: 0 !important;
+    background-size: cover !important;
+    background-position: center !important;
+    position: relative !important;
+    overflow: hidden !important;
 }
 
-.mock-list-composer {
-  background: #dedede;
-  padding: 12px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+/* Abstract cover fallback and softening overlay */
+.minicard-cover::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(224, 231, 255, 0.4), rgba(240, 249, 255, 0.4)) !important;
 }
 
-.mock-add-card-form {
-  margin: 0 0 10px;
+.minicard-cover:not([style*="url"]) {
+    background: linear-gradient(45deg, #e0e7ff, #f0f9ff) !important;
 }
 
-.mock-list-composer .edit-controls,
-.mock-add-card-form .add-controls,
-.mock-inline-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+.minicard-cover:not([style*="url"])::after {
+    display: none !important;
 }
 
-.mock-inline-form,
-.mock-card-form {
-  display: grid;
-  gap: 10px;
+.minicard-cover-image-probe {
+    display: none !important;
 }
 
-.mock-inline-form textarea,
-.mock-card-form textarea,
-.card-details .full-line {
-  width: 100%;
+/* 6. Label Chips */
+.minicard-labels {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  margin-bottom: 8px !important;
 }
 
-.mock-attachments {
-  display: grid;
-  gap: 8px;
+.card-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  height: 8px !important;
+  min-height: 8px !important;
+  padding: 0 6px !important;
+  border-radius: 999px !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  margin-bottom: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-indent: -9999px !important;
+  transition:
+    width 180ms ease,
+    min-width 180ms ease,
+    max-width 180ms ease,
+    height 180ms ease,
+    font-size 180ms ease,
+    padding 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease !important;
 }
 
-.mock-attachment-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 10px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.04);
+.minicard-labels.is-expanded .card-label {
+  width: 70px !important;
+  min-width: 70px !important;
+  max-width: 70px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  padding: 0 8px !important;
+  font-size: 12px !important;
+  text-indent: 0 !important;
 }
 
-.mock-toast {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 3000;
-  max-width: min(420px, calc(100vw - 40px));
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: rgba(17, 24, 39, 0.94);
-  color: #fff;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-  font-size: 14px;
+.card-label-purple { background: #f3e8ff !important; color: #7e22ce !important; }
+.card-label-blue { background: #e0f2fe !important; color: #0369a1 !important; }
+.card-label-green { background: #dcfce7 !important; color: #15803d !important; }
+.card-label-red { background: #fee2e2 !important; color: #b91c1c !important; }
+.card-label-orange { background: #ffedd5 !important; color: #c2410c !important; }
+.card-label-yellow { background: #fef9c3 !important; color: #a16207 !important; }
+.card-label-sky { background: #e0f2fe !important; color: #0369a1 !important; }
+.card-label-black { background: #f1f5f9 !important; color: #475569 !important; }
+.card-label-crimson { background: #ffe4e6 !important; color: #be123c !important; }
+.card-label-gold { background: #fef9c3 !important; color: #a16207 !important; }
+.card-label-lime { background: #f0fdf4 !important; color: #166534 !important; }
+
+/* 7. Hide Wekan Chrome & Old Triggers */
+#header-quick-access, 
+.js-edit-board-title, 
+.js-change-visibility, 
+.js-watch-board, 
+.js-star-board, 
+.js-sort-cards, 
+.separator, 
+.cardCount,
+.list-collapse-indicator,
+.swimlane-header-wrap,
+.open-minicard-composer,
+.list-footer-add-card,
+.js-add-card,
+.minicard-details-menu-with-handle {
+  display: none !important;
+}
+
+/* Ensure the list header plus button is visible and styled */
+.list-header-plus {
+  width: 100% !important;
+  min-height: 32px !important;
+  background: transparent !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  color: var(--premium-text-muted) !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: var(--premium-transition) !important;
+  text-decoration: none !important;
+  padding: 6px 8px !important;
+}
+
+.list-header-plus:hover {
+    background: rgba(9, 30, 66, 0.06) !important;
+    color: #172b4d !important;
+}
+
+/* Avatars */
+.avatar {
+  border-radius: 50% !important;
+}
+
+
+/* ==========================================================================
+   TICKET LIGHT-MODE OVERRIDES
+   Ensures cards are bright white with dark readable text regardless of Wekan theme
+   ========================================================================== */
+
+/* 1. Force white card background with high specificity */
+body.mock-standalone .minicard,
+body.mock-standalone .desktop-mode .minicard,
+body.mock-standalone .mobile-mode .minicard,
+body.mock-standalone [class*="board-color-"] .minicard,
+body.mock-standalone .minicard.nodragscroll,
+body.mock-standalone .minicard-wrapper.is-selected .minicard,
+body.mock-standalone .minicard-wrapper.is-checked .minicard,
+body.mock-standalone .minicard:hover {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31) !important;
+    color: #172b4d !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* 2. Card Title & Text Readability */
+body.mock-standalone .minicard .minicard-title,
+body.mock-standalone .minicard .minicard-title p,
+body.mock-standalone .minicard .minicard-title .viewer,
+body.mock-standalone .minicard .minicard-title .viewer p,
+body.mock-standalone .minicard-description,
+body.mock-standalone .minicard-description p,
+body.mock-standalone .minicard-description .viewer,
+body.mock-standalone .minicard-description .viewer p {
+    color: #172b4d !important;
+    font-weight: 400 !important;
+    font-family: 'Atlassian Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+body.mock-standalone .desktop-mode .minicard .minicard-title,
+body.mock-standalone .desktop-mode .minicard .minicard-title p,
+body.mock-standalone .desktop-mode .minicard .minicard-title .viewer,
+body.mock-standalone .desktop-mode .minicard .minicard-title .viewer p,
+body.mock-standalone .mobile-mode .minicard .minicard-title,
+body.mock-standalone .mobile-mode .minicard .minicard-title p,
+body.mock-standalone .mobile-mode .minicard .minicard-title .viewer,
+body.mock-standalone .mobile-mode .minicard .minicard-title .viewer p {
+    font-size: 14px !important;
+    line-height: 20px !important;
+}
+
+body.mock-standalone .minicard .minicard-body {
+    padding: 8px !important;
+}
+
+body.mock-standalone .minicard.has-cover .minicard-cover {
+    display: block !important;
+    width: 100% !important;
+    height: 160px !important;
+    margin: 0 !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+body.mock-standalone .minicard.no-cover .minicard-cover {
+    display: none !important;
+}
+
+body.mock-standalone .minicard.no-cover .minicard-body {
+    padding-top: 8px !important;
+}
+
+/* 3. Badges, Meta, and Dates */
+body.mock-standalone .minicard .badges,
+body.mock-standalone .minicard .badge,
+body.mock-standalone .minicard .badge .badge-text,
+body.mock-standalone .minicard .badge .fa,
+body.mock-standalone .minicard .badge .icon {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+}
+
+/* 4. Priority Indicators & Handles */
+body.mock-standalone .minicard .minicard-details-menu-with-handle {
+    color: #cbd5e1 !important;
+}
+
+body.mock-standalone .minicard .minicard-details-menu-with-handle:hover {
+    color: var(--premium-accent) !important;
+}
+
+/* Priority specific overrides */
+body.mock-standalone .minicard .minicard-priority-critical i,
+body.mock-standalone .minicard .minicard-priority-critical .fa { color: #ef4444 !important; }
+body.mock-standalone .minicard .minicard-priority-high i,
+body.mock-standalone .minicard .minicard-priority-high .fa { color: #f97316 !important; }
+body.mock-standalone .minicard .minicard-priority-medium i,
+body.mock-standalone .minicard .minicard-priority-medium .fa { color: #3b82f6 !important; }
+
+/* 5. Labels - Ensure they aren't muted */
+body.mock-standalone .minicard .minicard-labels {
+    margin-bottom: 8px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+}
+
+body.mock-standalone .minicard .minicard-labels .card-label {
+    opacity: 1 !important;
+    border-radius: 999px !important;
+    height: auto !important;
+    line-height: 1 !important;
+    padding: 0 6px !important;
+}
+
+body.mock-standalone .minicard .minicard-labels:not(.is-expanded) .card-label {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    height: 8px !important;
+    min-height: 8px !important;
+    font-size: 0 !important;
+    text-indent: -9999px !important;
+}
+
+body.mock-standalone .minicard .minicard-labels.is-expanded .card-label {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    height: 16px !important;
+    min-height: 16px !important;
+    font-size: 12px !important;
+    text-indent: 0 !important;
+    padding: 0 8px !important;
+}
+
+/* 6. Assignees / Avatars */
+body.mock-standalone .minicard .minicard-assignees {
+    margin-top: 8px !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 0 !important;
+    min-height: 20px !important;
+}
+
+body.mock-standalone .minicard .minicard-assignees .member {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    margin-left: -6px !important;
+    border: 2px solid #fff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    z-index: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
+}
+
+body.mock-standalone .minicard .minicard-assignees .member:first-child {
+    margin-left: 0 !important;
+}
+
+.avatar-initials-text {
+    display: block !important;
+    line-height: 1 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    padding: 1px !important;
+}
+
+.avatar-cluster .avatar-initials-text {
+    font-size: 12px !important;
+}
+
+body.mock-standalone .minicard .minicard-assignees .member-initials-text,
+body.mock-standalone .minicard .minicard-assignees .avatar-initials-text {
+    font-size: 8px !important;
+    line-height: 1 !important;
+    transform: translateY(-0.5px) !important;
+}
+
+/* 7. Checklist Specifics */
+body.mock-standalone .minicard .badge.badge-checklist.is-finished {
+    background-color: #f0fdf4 !important;
+    color: #166534 !important;
+    border: 1px solid #dcfce7 !important;
+}
+
+body.mock-standalone .minicard .badge.badge-checklist.is-finished .fa {
+    color: #166534 !important;
+}
+
+/* 8. Fix for Desktop Mode width issues */
+body.mock-standalone .desktop-mode .minicard {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+
+/* Additional Ticket Refinements */
+body.mock-standalone .minicard-wrapper,
+body.mock-standalone .minicard-wrapper:hover,
+body.mock-standalone .minicard-wrapper:active,
+body.mock-standalone .minicard-wrapper:focus {
+    background-color: transparent !important;
+    background: transparent !important;
+    text-decoration: none !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Meta rows, due dates, and other small badges */
+body.mock-standalone .minicard .badge-date,
+body.mock-standalone .minicard .badge-due,
+body.mock-standalone .minicard .badge-period {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
+}
+
+body.mock-standalone .minicard .badge-due.is-overdue {
+    background-color: #fef2f2 !important;
+    color: #b91c1c !important;
+}
+
+body.mock-standalone .minicard .badge-due.is-due-soon {
+    background-color: #fffbeb !important;
+    color: #92400e !important;
+}
+
+/* Ensure icons in badges are also dark */
+body.mock-standalone .minicard .badge i,
+body.mock-standalone .minicard .badge .fa {
+    color: inherit !important;
 }
