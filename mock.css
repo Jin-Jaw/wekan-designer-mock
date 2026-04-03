@@ -850,15 +850,24 @@ body.mock-standalone .minicard .minicard-labels.is-expanded .card-label {
 body.mock-standalone .minicard .minicard-assignees {
     margin-top: 8px !important;
     padding-top: 0 !important;
+    padding-right: 4px !important;
+    padding-bottom: 2px !important;
     border-top: none !important;
     display: flex !important;
     justify-content: flex-end !important;
     align-items: center !important;
     gap: 0 !important;
     min-height: 20px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
 }
 
 body.mock-standalone .minicard .minicard-assignees .member {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    flex: 0 0 24px !important;
     margin-left: -6px !important;
     position: relative !important;
     z-index: 1 !important;
@@ -880,6 +889,7 @@ body.mock-standalone .minicard .minicard-assignees .member:first-child {
     font-weight: 700 !important;
     text-align: center !important;
     padding: 1px !important;
+    color: #292a2e !important;
 }
 
 .avatar-cluster .avatar-initials-text {
@@ -918,12 +928,15 @@ body.mock-standalone .member.js-member .avatar {
 }
 
 body.mock-standalone .minicard .minicard-assignees .member .avatar {
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px !important;
-    min-height: 16px !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
     border: 2px solid #fff !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    background-clip: padding-box !important;
 }
 
 /* 7. Checklist Specifics */
@@ -1230,6 +1243,22 @@ body.mock-standalone .card-details.js-card-details .activity-meta {
     font-weight: 400 !important;
 }
 
+body.mock-standalone .card-details.js-card-details .comment-member {
+    color: #292a2e !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+}
+
+body.mock-standalone .card-details.js-card-details .comment-meta {
+    color: #292a2e !important;
+    font-size: 12px !important;
+    line-height: 16px !important;
+    font-weight: 400 !important;
+    margin: 0 !important;
+}
+
 body.mock-standalone .card-details.js-card-details .card-details-item-title,
 body.mock-standalone .card-details.js-card-details .activity-title h3 {
     color: #292a2e !important;
@@ -1244,6 +1273,68 @@ body.mock-standalone .card-details.js-card-details .activity-title h3 {
 body.mock-standalone .card-details.js-card-details .card-details-item-assignees > div {
     padding-top: 16px !important;
     padding-left: 16px !important;
+}
+
+body.mock-standalone .card-details.js-card-details .comments,
+body.mock-standalone .card-details.js-card-details .new-comment {
+    padding-left: 8px !important;
+}
+
+body.mock-standalone .card-details.js-card-details .comments .comment {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+}
+
+body.mock-standalone .card-details.js-card-details .comments .comment > .member.js-member {
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+    align-self: flex-start !important;
+    order: 1 !important;
+}
+
+body.mock-standalone .card-details.js-card-details .comments .comment .comment-desc {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    padding-top: 0 !important;
+    order: 2 !important;
+}
+
+body.mock-standalone .card-details.js-card-details .new-comment {
+    display: flex !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+}
+
+body.mock-standalone .card-details.js-card-details .new-comment > .member.js-member {
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+    align-self: flex-start !important;
+    order: 1 !important;
+}
+
+body.mock-standalone .card-details.js-card-details .new-comment textarea.full-line {
+    order: 2 !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+}
+
+body.mock-standalone .card-details.js-card-details .new-comment .mock-inline-actions {
+    order: 3 !important;
+    flex: 0 0 100% !important;
+    margin-left: 0 !important;
+    padding-left: 44px !important;
+}
+
+body.mock-standalone .card-details.js-card-details .comments .comment > .member.js-member .avatar,
+body.mock-standalone .card-details.js-card-details .new-comment > .member.js-member .avatar {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
 }
 
 body.mock-standalone .card-details.js-card-details .full-line,
