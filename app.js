@@ -1153,6 +1153,9 @@
           if (collapseToggle.parentElement !== headerWrapper) {
             headerWrapper.insertBefore(collapseToggle, headerWrapper.firstChild);
           }
+          if (titleWrapper && titleWrapper.parentElement === headerWrapper) {
+            headerWrapper.appendChild(titleWrapper);
+          }
         } else if (collapseToggle.parentElement !== listMenuWrapper) {
           listMenuWrapper.insertBefore(collapseToggle, listMenuWrapper.firstChild);
         }
